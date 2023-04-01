@@ -103,6 +103,7 @@ public class InternalDataBase {
         loadAccountsDataBase();
         try {
             loadAnnualLimitsDataBase();
+            load3MonthsAlreadyEmitted();
         } catch (NoSuchAlgorithmException e) {
             throw new RuntimeException(e);
         }
@@ -522,6 +523,101 @@ public class InternalDataBase {
         em24.setMonth(3);
         em24.setYear(2022);
         this.emissionRecordsTreeMap.put(em24.getEmissionId(), em24);
+
+        // logistic
+        // gas
+        Emission em25 = new Emission();
+        em25.setUnitId(this.hashCreator.createMD5Hash("abcdefghijklmnopqrstuvwxyz0123456789@$&^%"));
+        em25.setDepartmentId(Department.LOGISTIC.getDepartment());
+        em25.setAccountId("601026");
+        em25.setUnitId(Unit.GALLONS.getUnit());
+        em25.setEmission(new BigDecimal("416.67"));
+        em25.setMonth(1);
+        em25.setYear(2022);
+        this.emissionRecordsTreeMap.put(em25.getEmissionId(), em25);
+
+        Emission em26 = new Emission();
+        em26.setUnitId(this.hashCreator.createMD5Hash("abcdefghijklmnopqrstuvwxyz0123456789@$&^%"));
+        em26.setDepartmentId(Department.LOGISTIC.getDepartment());
+        em26.setAccountId("601026");
+        em26.setUnitId(Unit.GALLONS.getUnit());
+        em26.setEmission(new BigDecimal("416.67"));
+        em26.setMonth(2);
+        em26.setYear(2022);
+        this.emissionRecordsTreeMap.put(em26.getEmissionId(), em26);
+
+        Emission em27 = new Emission();
+        em27.setUnitId(this.hashCreator.createMD5Hash("abcdefghijklmnopqrstuvwxyz0123456789@$&^%"));
+        em27.setDepartmentId(Department.LOGISTIC.getDepartment());
+        em27.setAccountId("601026");
+        em27.setUnitId(Unit.GALLONS.getUnit());
+        em27.setEmission(new BigDecimal("416.66"));
+        em27.setMonth(3);
+        em27.setYear(2022);
+        this.emissionRecordsTreeMap.put(em27.getEmissionId(), em27);
+
+        // oil
+        Emission em28 = new Emission();
+        em28.setUnitId(this.hashCreator.createMD5Hash("abcdefghijklmnopqrstuvwxyz0123456789@$&^%"));
+        em28.setDepartmentId(Department.LOGISTIC.getDepartment());
+        em28.setAccountId("601029");
+        em28.setUnitId(Unit.GALLONS.getUnit());
+        em28.setEmission(new BigDecimal("0.33"));
+        em28.setMonth(1);
+        em28.setYear(2022);
+        this.emissionRecordsTreeMap.put(em28.getEmissionId(), em28);
+
+        Emission em29 = new Emission();
+        em29.setUnitId(this.hashCreator.createMD5Hash("abcdefghijklmnopqrstuvwxyz0123456789@$&^%"));
+        em29.setDepartmentId(Department.LOGISTIC.getDepartment());
+        em29.setAccountId("601029");
+        em29.setUnitId(Unit.GALLONS.getUnit());
+        em29.setEmission(new BigDecimal("0.33"));
+        em29.setMonth(2);
+        em29.setYear(2022);
+        this.emissionRecordsTreeMap.put(em29.getEmissionId(), em29);
+
+        Emission em30 = new Emission();
+        em30.setUnitId(this.hashCreator.createMD5Hash("abcdefghijklmnopqrstuvwxyz0123456789@$&^%"));
+        em30.setDepartmentId(Department.LOGISTIC.getDepartment());
+        em30.setAccountId("601029");
+        em30.setUnitId(Unit.GALLONS.getUnit());
+        em30.setEmission(new BigDecimal("0.34"));
+        em30.setMonth(3);
+        em30.setYear(2022);
+        this.emissionRecordsTreeMap.put(em30.getEmissionId(), em30);
+
+
+        // trip
+        Emission em31 = new Emission();
+        em31.setUnitId(this.hashCreator.createMD5Hash("abcdefghijklmnopqrstuvwxyz0123456789@$&^%"));
+        em31.setDepartmentId(Department.LOGISTIC.getDepartment());
+        em31.setAccountId("601050");
+        em31.setUnitId(Unit.TRIPS.getUnit());
+        em31.setEmission(new BigDecimal("2"));
+        em31.setMonth(1);
+        em31.setYear(2022);
+        this.emissionRecordsTreeMap.put(em31.getEmissionId(), em31);
+
+        Emission em32 = new Emission();
+        em32.setUnitId(this.hashCreator.createMD5Hash("abcdefghijklmnopqrstuvwxyz0123456789@$&^%"));
+        em32.setDepartmentId(Department.LOGISTIC.getDepartment());
+        em32.setAccountId("601050");
+        em32.setUnitId(Unit.TRIPS.getUnit());
+        em32.setEmission(new BigDecimal("2"));
+        em32.setMonth(2);
+        em32.setYear(2022);
+        this.emissionRecordsTreeMap.put(em32.getEmissionId(), em32);
+
+        Emission em33 = new Emission();
+        em33.setUnitId(this.hashCreator.createMD5Hash("abcdefghijklmnopqrstuvwxyz0123456789@$&^%"));
+        em33.setDepartmentId(Department.LOGISTIC.getDepartment());
+        em33.setAccountId("601050");
+        em33.setUnitId(Unit.TRIPS.getUnit());
+        em33.setEmission(new BigDecimal("2"));
+        em33.setMonth(3);
+        em33.setYear(2022);
+        this.emissionRecordsTreeMap.put(em33.getEmissionId(), em33);
     }
 
 }
