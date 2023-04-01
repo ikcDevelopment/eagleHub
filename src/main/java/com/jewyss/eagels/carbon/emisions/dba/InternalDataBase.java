@@ -7,6 +7,7 @@ import lombok.Getter;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.security.NoSuchAlgorithmException;
+import java.util.Objects;
 import java.util.TreeMap;
 
 /**
@@ -37,8 +38,22 @@ public class InternalDataBase {
         return false;
     }
 
-    public boolean updateEmissionRecord(){
-        return true;
+    public boolean updateEmissionRecord(Emission emission){
+        this.message="Emission successfully updated.";
+
+        if(Objects.nonNull(emission)){
+            Emission em = this.emissionRecordsTreeMap.get(emission.getEmissionId());
+            if(Objects.nonNull(em)){
+                this.emissionRecordsTreeMap.replace(emission.getEmissionId(), emission);
+                return true;
+            }else{
+                this.message="Emission does not exist on data base.";
+            }
+        }else{
+            this.message="Null request.";
+        }
+
+        return false;
     }
 
     private Emission convertEmission(EmissionRequest emissionRequest) throws NoSuchAlgorithmException {
