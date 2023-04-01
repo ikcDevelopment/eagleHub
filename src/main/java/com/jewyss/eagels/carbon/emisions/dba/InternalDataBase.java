@@ -37,6 +37,10 @@ public class InternalDataBase {
         return false;
     }
 
+    public boolean updateEmissionRecord(){
+        return true;
+    }
+
     private Emission convertEmission(EmissionRequest emissionRequest) throws NoSuchAlgorithmException {
         Emission emission = new Emission();
         emission.setEmissionId(this.hashCreator.createMD5Hash("abcdefghijklmnopqrstuvwxyz0123456789@$&^%"));
