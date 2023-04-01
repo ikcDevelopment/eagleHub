@@ -14,7 +14,8 @@ import java.util.Date;
 @Getter
 @Setter
 public class EmissionRequest {
-    Date emissionDate;
+    int month;
+    int year;
     String accountId;
     String departmentId;
     String unitId;
