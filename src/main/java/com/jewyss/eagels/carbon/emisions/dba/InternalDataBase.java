@@ -5,18 +5,16 @@ import com.jewyss.eagels.carbon.emisions.models.EmissionLimits;
 import com.jewyss.eagels.carbon.emisions.models.request.Emission;
 import com.jewyss.eagels.carbon.emisions.models.request.EmissionRequest;
 import com.jewyss.eagels.carbon.emisions.security.HashCreator;
-import com.jewyss.eagels.carbon.emisions.dba.*;
 import jakarta.annotation.PostConstruct;
 import lombok.Getter;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import org.springframework.web.context.annotation.ApplicationScope;
 
 import java.math.BigDecimal;
 import java.security.NoSuchAlgorithmException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.TreeMap;
+import java.util.*;
+import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * @company kappa.computacion
@@ -24,6 +22,7 @@ import java.util.TreeMap;
  * @date
  */
 @ApplicationScope
+@Service
 public class InternalDataBase {
     @Autowired
     private HashCreator hashCreator;
@@ -68,13 +67,13 @@ public class InternalDataBase {
         return false;
     }
 
-    public boolean deleteEmissionRecord(Emission emission){
+    public boolean deleteEmissionRecord(String emissionId){
         this.message="Emission successfully deleted.";
 
-        if(Objects.nonNull(emission)){
-            Emission em = this.emissionRecordsTreeMap.get(emission.getEmissionId());
+        if(Objects.nonNull(emissionId)){
+            Emission em = this.emissionRecordsTreeMap.get(emissionId);
             if(Objects.nonNull(em)){
-                this.emissionRecordsTreeMap.remove(emission.getEmissionId(), em);
+                this.emissionRecordsTreeMap.remove(em.getEmissionId(), em);
                 return true;
             }else{
                 this.message="Emission does not exist on data base.";
@@ -84,6 +83,60 @@ public class InternalDataBase {
         }
 
         return false;
+    }
+
+    /**
+     * I used accounts to manage the categories
+     * @param accounts
+     */
+    public Map<Integer, BigDecimal> percentageEmissionByCategory(List<String> accounts){
+        this.message = "The percentages where calculated successfully!";
+
+        System.out.println(accounts);
+
+        List<Emission> emissionsInDb = new ArrayList<>();
+        Map<Integer, BigDecimal> resultados  = new HashMap<>();
+        Map<Integer, BigDecimal> resultsPercentage  = new HashMap<>();
+        // filter accounts
+        this.emissionRecordsTreeMap.forEach( (id, emission) ->{
+            if(accounts.contains(emission.getAccountId())){
+                emissionsInDb.add(emission);
+            }
+        });
+        // sort by month
+        emissionsInDb.sort((d1, d2) -> {
+            return d2.getMonth() - d1.getMonth();
+        });
+
+        System.out.println(emissionsInDb);
+
+        String account = "";
+        BigDecimal value = BigDecimal.ZERO;
+        BigDecimal totalSum = BigDecimal.ZERO;
+        int mes = 0;
+
+        for (Emission emission : emissionsInDb) {
+            value = emission.getEmission();
+            mes = emission.getMonth();
+
+            if (resultados.get(mes) != null) {
+                BigDecimal valor = resultados.get(mes);
+                valor = valor.add(value);
+                totalSum = totalSum.add(value);
+                resultados.replace(mes, valor);
+            }else{
+                resultados.put(mes, value);
+            }
+        }
+
+        for (Map.Entry<Integer, BigDecimal> entry : resultados.entrySet()) {
+            Integer month = entry.getKey();
+            BigDecimal valueP = entry.getValue();
+            BigDecimal percentage = valueP.divide(totalSum);
+            resultsPercentage.put(month, percentage);
+        }
+
+        return resultsPercentage;
     }
 
     private Emission convertEmission(EmissionRequest emissionRequest) throws NoSuchAlgorithmException {
@@ -278,7 +331,7 @@ public class InternalDataBase {
 
     private void load3MonthsAlreadyEmitted() throws NoSuchAlgorithmException {
         Emission em1 = new Emission();
-        em1.setUnitId(this.hashCreator.createMD5Hash("abcdefghijklmnopqrstuvwxyz0123456789@$&^%"));
+        em1.setEmissionId(this.hashCreator.createMD5Hash("abcdefghijklmnopqrstuvwxyz0123456789@$&^%"));
         em1.setDepartmentId(Department.ADMIN.getDepartment());
         em1.setAccountId("701026");
         em1.setUnitId(Unit.GALLONS.getUnit());
@@ -288,7 +341,7 @@ public class InternalDataBase {
         this.emissionRecordsTreeMap.put(em1.getEmissionId(), em1);
 
         Emission em2 = new Emission();
-        em2.setUnitId(this.hashCreator.createMD5Hash("abcdefghijklmnopqrstuvwxyz0123456789@$&^%"));
+        em2.setEmissionId(this.hashCreator.createMD5Hash("abcdefghijklmnopqrstuvwxyz0123456789@$&^%"));
         em2.setDepartmentId(Department.ADMIN.getDepartment());
         em2.setAccountId("701026");
         em2.setUnitId(Unit.GALLONS.getUnit());
@@ -298,7 +351,7 @@ public class InternalDataBase {
         this.emissionRecordsTreeMap.put(em2.getEmissionId(), em2);
 
         Emission em3 = new Emission();
-        em3.setUnitId(this.hashCreator.createMD5Hash("abcdefghijklmnopqrstuvwxyz0123456789@$&^%"));
+        em3.setEmissionId(this.hashCreator.createMD5Hash("abcdefghijklmnopqrstuvwxyz0123456789@$&^%"));
         em3.setDepartmentId(Department.ADMIN.getDepartment());
         em3.setAccountId("701026");
         em3.setUnitId(Unit.GALLONS.getUnit());
@@ -309,7 +362,7 @@ public class InternalDataBase {
 
         // electricity
         Emission em4 = new Emission();
-        em4.setUnitId(this.hashCreator.createMD5Hash("abcdefghijklmnopqrstuvwxyz0123456789@$&^%"));
+        em4.setEmissionId(this.hashCreator.createMD5Hash("abcdefghijklmnopqrstuvwxyz0123456789@$&^%"));
         em4.setDepartmentId(Department.ADMIN.getDepartment());
         em4.setAccountId("701028");
         em4.setUnitId(Unit.KW.getUnit());
@@ -319,7 +372,7 @@ public class InternalDataBase {
         this.emissionRecordsTreeMap.put(em4.getEmissionId(), em4);
 
         Emission em5 = new Emission();
-        em5.setUnitId(this.hashCreator.createMD5Hash("abcdefghijklmnopqrstuvwxyz0123456789@$&^%"));
+        em5.setEmissionId(this.hashCreator.createMD5Hash("abcdefghijklmnopqrstuvwxyz0123456789@$&^%"));
         em5.setDepartmentId(Department.ADMIN.getDepartment());
         em5.setAccountId("701028");
         em5.setUnitId(Unit.KW.getUnit());
@@ -329,7 +382,7 @@ public class InternalDataBase {
         this.emissionRecordsTreeMap.put(em5.getEmissionId(), em5);
 
         Emission em6 = new Emission();
-        em6.setUnitId(this.hashCreator.createMD5Hash("abcdefghijklmnopqrstuvwxyz0123456789@$&^%"));
+        em6.setEmissionId(this.hashCreator.createMD5Hash("abcdefghijklmnopqrstuvwxyz0123456789@$&^%"));
         em6.setDepartmentId(Department.ADMIN.getDepartment());
         em6.setAccountId("701028");
         em6.setUnitId(Unit.KW.getUnit());
@@ -340,7 +393,7 @@ public class InternalDataBase {
 
         // trips
         Emission em7 = new Emission();
-        em7.setUnitId(this.hashCreator.createMD5Hash("abcdefghijklmnopqrstuvwxyz0123456789@$&^%"));
+        em7.setEmissionId(this.hashCreator.createMD5Hash("abcdefghijklmnopqrstuvwxyz0123456789@$&^%"));
         em7.setDepartmentId(Department.ADMIN.getDepartment());
         em7.setAccountId("701030");
         em7.setUnitId(Unit.TRIPS.getUnit());
@@ -350,7 +403,7 @@ public class InternalDataBase {
         this.emissionRecordsTreeMap.put(em7.getEmissionId(), em7);
 
         Emission em8 = new Emission();
-        em8.setUnitId(this.hashCreator.createMD5Hash("abcdefghijklmnopqrstuvwxyz0123456789@$&^%"));
+        em8.setEmissionId(this.hashCreator.createMD5Hash("abcdefghijklmnopqrstuvwxyz0123456789@$&^%"));
         em8.setDepartmentId(Department.ADMIN.getDepartment());
         em8.setAccountId("701030");
         em8.setUnitId(Unit.TRIPS.getUnit());
@@ -360,7 +413,7 @@ public class InternalDataBase {
         this.emissionRecordsTreeMap.put(em8.getEmissionId(), em8);
 
         Emission em9 = new Emission();
-        em9.setUnitId(this.hashCreator.createMD5Hash("abcdefghijklmnopqrstuvwxyz0123456789@$&^%"));
+        em9.setEmissionId(this.hashCreator.createMD5Hash("abcdefghijklmnopqrstuvwxyz0123456789@$&^%"));
         em9.setDepartmentId(Department.ADMIN.getDepartment());
         em9.setAccountId("701030");
         em9.setUnitId(Unit.TRIPS.getUnit());
@@ -371,7 +424,7 @@ public class InternalDataBase {
 
         // sheets
         Emission em10 = new Emission();
-        em10.setUnitId(this.hashCreator.createMD5Hash("abcdefghijklmnopqrstuvwxyz0123456789@$&^%"));
+        em10.setEmissionId(this.hashCreator.createMD5Hash("abcdefghijklmnopqrstuvwxyz0123456789@$&^%"));
         em10.setDepartmentId(Department.ADMIN.getDepartment());
         em10.setAccountId("701051");
         em10.setUnitId(Unit.SHEETS.getUnit());
@@ -381,7 +434,7 @@ public class InternalDataBase {
         this.emissionRecordsTreeMap.put(em10.getEmissionId(), em10);
 
         Emission em11 = new Emission();
-        em11.setUnitId(this.hashCreator.createMD5Hash("abcdefghijklmnopqrstuvwxyz0123456789@$&^%"));
+        em11.setEmissionId(this.hashCreator.createMD5Hash("abcdefghijklmnopqrstuvwxyz0123456789@$&^%"));
         em11.setDepartmentId(Department.ADMIN.getDepartment());
         em11.setAccountId("701051");
         em11.setUnitId(Unit.SHEETS.getUnit());
@@ -391,7 +444,7 @@ public class InternalDataBase {
         this.emissionRecordsTreeMap.put(em11.getEmissionId(), em11);
 
         Emission em12 = new Emission();
-        em12.setUnitId(this.hashCreator.createMD5Hash("abcdefghijklmnopqrstuvwxyz0123456789@$&^%"));
+        em12.setEmissionId(this.hashCreator.createMD5Hash("abcdefghijklmnopqrstuvwxyz0123456789@$&^%"));
         em12.setDepartmentId(Department.ADMIN.getDepartment());
         em12.setAccountId("701051");
         em12.setUnitId(Unit.SHEETS.getUnit());
@@ -402,7 +455,7 @@ public class InternalDataBase {
 
         //production
         Emission em13 = new Emission();
-        em13.setUnitId(this.hashCreator.createMD5Hash("abcdefghijklmnopqrstuvwxyz0123456789@$&^%"));
+        em13.setEmissionId(this.hashCreator.createMD5Hash("abcdefghijklmnopqrstuvwxyz0123456789@$&^%"));
         em13.setDepartmentId(Department.FACTORY.getDepartment());
         em13.setAccountId("501025");
         em13.setUnitId(Unit.GALLONS.getUnit());
@@ -412,7 +465,7 @@ public class InternalDataBase {
         this.emissionRecordsTreeMap.put(em13.getEmissionId(), em13);
 
         Emission em14 = new Emission();
-        em14.setUnitId(this.hashCreator.createMD5Hash("abcdefghijklmnopqrstuvwxyz0123456789@$&^%"));
+        em14.setEmissionId(this.hashCreator.createMD5Hash("abcdefghijklmnopqrstuvwxyz0123456789@$&^%"));
         em14.setDepartmentId(Department.FACTORY.getDepartment());
         em14.setAccountId("501025");
         em14.setUnitId(Unit.GALLONS.getUnit());
@@ -422,7 +475,7 @@ public class InternalDataBase {
         this.emissionRecordsTreeMap.put(em14.getEmissionId(), em14);
 
         Emission em15 = new Emission();
-        em15.setUnitId(this.hashCreator.createMD5Hash("abcdefghijklmnopqrstuvwxyz0123456789@$&^%"));
+        em15.setEmissionId(this.hashCreator.createMD5Hash("abcdefghijklmnopqrstuvwxyz0123456789@$&^%"));
         em15.setDepartmentId(Department.FACTORY.getDepartment());
         em15.setAccountId("501025");
         em15.setUnitId(Unit.GALLONS.getUnit());
@@ -433,7 +486,7 @@ public class InternalDataBase {
 
         // gas
         Emission em16 = new Emission();
-        em16.setUnitId(this.hashCreator.createMD5Hash("abcdefghijklmnopqrstuvwxyz0123456789@$&^%"));
+        em16.setEmissionId(this.hashCreator.createMD5Hash("abcdefghijklmnopqrstuvwxyz0123456789@$&^%"));
         em16.setDepartmentId(Department.FACTORY.getDepartment());
         em16.setAccountId("501026");
         em16.setUnitId(Unit.GALLONS.getUnit());
@@ -443,7 +496,7 @@ public class InternalDataBase {
         this.emissionRecordsTreeMap.put(em16.getEmissionId(), em16);
 
         Emission em17 = new Emission();
-        em17.setUnitId(this.hashCreator.createMD5Hash("abcdefghijklmnopqrstuvwxyz0123456789@$&^%"));
+        em17.setEmissionId(this.hashCreator.createMD5Hash("abcdefghijklmnopqrstuvwxyz0123456789@$&^%"));
         em17.setDepartmentId(Department.FACTORY.getDepartment());
         em17.setAccountId("501026");
         em17.setUnitId(Unit.GALLONS.getUnit());
@@ -453,7 +506,7 @@ public class InternalDataBase {
         this.emissionRecordsTreeMap.put(em17.getEmissionId(), em17);
 
         Emission em18 = new Emission();
-        em18.setUnitId(this.hashCreator.createMD5Hash("abcdefghijklmnopqrstuvwxyz0123456789@$&^%"));
+        em18.setEmissionId(this.hashCreator.createMD5Hash("abcdefghijklmnopqrstuvwxyz0123456789@$&^%"));
         em18.setDepartmentId(Department.FACTORY.getDepartment());
         em18.setAccountId("501026");
         em18.setUnitId(Unit.GALLONS.getUnit());
@@ -464,7 +517,7 @@ public class InternalDataBase {
 
         // oil
         Emission em19 = new Emission();
-        em19.setUnitId(this.hashCreator.createMD5Hash("abcdefghijklmnopqrstuvwxyz0123456789@$&^%"));
+        em19.setEmissionId(this.hashCreator.createMD5Hash("abcdefghijklmnopqrstuvwxyz0123456789@$&^%"));
         em19.setDepartmentId(Department.FACTORY.getDepartment());
         em19.setAccountId("501027");
         em19.setUnitId(Unit.GALLONS.getUnit());
@@ -474,7 +527,7 @@ public class InternalDataBase {
         this.emissionRecordsTreeMap.put(em19.getEmissionId(), em19);
 
         Emission em20 = new Emission();
-        em20.setUnitId(this.hashCreator.createMD5Hash("abcdefghijklmnopqrstuvwxyz0123456789@$&^%"));
+        em20.setEmissionId(this.hashCreator.createMD5Hash("abcdefghijklmnopqrstuvwxyz0123456789@$&^%"));
         em20.setDepartmentId(Department.FACTORY.getDepartment());
         em20.setAccountId("501027");
         em20.setUnitId(Unit.GALLONS.getUnit());
@@ -484,7 +537,7 @@ public class InternalDataBase {
         this.emissionRecordsTreeMap.put(em20.getEmissionId(), em20);
 
         Emission em21 = new Emission();
-        em21.setUnitId(this.hashCreator.createMD5Hash("abcdefghijklmnopqrstuvwxyz0123456789@$&^%"));
+        em21.setEmissionId(this.hashCreator.createMD5Hash("abcdefghijklmnopqrstuvwxyz0123456789@$&^%"));
         em21.setDepartmentId(Department.FACTORY.getDepartment());
         em21.setAccountId("501027");
         em21.setUnitId(Unit.GALLONS.getUnit());
@@ -495,7 +548,7 @@ public class InternalDataBase {
 
         // electricity
         Emission em22 = new Emission();
-        em22.setUnitId(this.hashCreator.createMD5Hash("abcdefghijklmnopqrstuvwxyz0123456789@$&^%"));
+        em22.setEmissionId(this.hashCreator.createMD5Hash("abcdefghijklmnopqrstuvwxyz0123456789@$&^%"));
         em22.setDepartmentId(Department.FACTORY.getDepartment());
         em22.setAccountId("501028");
         em22.setUnitId(Unit.KW.getUnit());
@@ -505,7 +558,7 @@ public class InternalDataBase {
         this.emissionRecordsTreeMap.put(em22.getEmissionId(), em22);
 
         Emission em23 = new Emission();
-        em23.setUnitId(this.hashCreator.createMD5Hash("abcdefghijklmnopqrstuvwxyz0123456789@$&^%"));
+        em23.setEmissionId(this.hashCreator.createMD5Hash("abcdefghijklmnopqrstuvwxyz0123456789@$&^%"));
         em23.setDepartmentId(Department.FACTORY.getDepartment());
         em23.setAccountId("501028");
         em23.setUnitId(Unit.KW.getUnit());
@@ -515,7 +568,7 @@ public class InternalDataBase {
         this.emissionRecordsTreeMap.put(em20.getEmissionId(), em20);
 
         Emission em24 = new Emission();
-        em24.setUnitId(this.hashCreator.createMD5Hash("abcdefghijklmnopqrstuvwxyz0123456789@$&^%"));
+        em24.setEmissionId(this.hashCreator.createMD5Hash("abcdefghijklmnopqrstuvwxyz0123456789@$&^%"));
         em24.setDepartmentId(Department.FACTORY.getDepartment());
         em24.setAccountId("501028");
         em24.setUnitId(Unit.KW.getUnit());
@@ -527,7 +580,7 @@ public class InternalDataBase {
         // logistic
         // gas
         Emission em25 = new Emission();
-        em25.setUnitId(this.hashCreator.createMD5Hash("abcdefghijklmnopqrstuvwxyz0123456789@$&^%"));
+        em25.setEmissionId(this.hashCreator.createMD5Hash("abcdefghijklmnopqrstuvwxyz0123456789@$&^%"));
         em25.setDepartmentId(Department.LOGISTIC.getDepartment());
         em25.setAccountId("601026");
         em25.setUnitId(Unit.GALLONS.getUnit());
@@ -537,7 +590,7 @@ public class InternalDataBase {
         this.emissionRecordsTreeMap.put(em25.getEmissionId(), em25);
 
         Emission em26 = new Emission();
-        em26.setUnitId(this.hashCreator.createMD5Hash("abcdefghijklmnopqrstuvwxyz0123456789@$&^%"));
+        em26.setEmissionId(this.hashCreator.createMD5Hash("abcdefghijklmnopqrstuvwxyz0123456789@$&^%"));
         em26.setDepartmentId(Department.LOGISTIC.getDepartment());
         em26.setAccountId("601026");
         em26.setUnitId(Unit.GALLONS.getUnit());
@@ -547,7 +600,7 @@ public class InternalDataBase {
         this.emissionRecordsTreeMap.put(em26.getEmissionId(), em26);
 
         Emission em27 = new Emission();
-        em27.setUnitId(this.hashCreator.createMD5Hash("abcdefghijklmnopqrstuvwxyz0123456789@$&^%"));
+        em27.setEmissionId(this.hashCreator.createMD5Hash("abcdefghijklmnopqrstuvwxyz0123456789@$&^%"));
         em27.setDepartmentId(Department.LOGISTIC.getDepartment());
         em27.setAccountId("601026");
         em27.setUnitId(Unit.GALLONS.getUnit());
@@ -558,7 +611,7 @@ public class InternalDataBase {
 
         // oil
         Emission em28 = new Emission();
-        em28.setUnitId(this.hashCreator.createMD5Hash("abcdefghijklmnopqrstuvwxyz0123456789@$&^%"));
+        em28.setEmissionId(this.hashCreator.createMD5Hash("abcdefghijklmnopqrstuvwxyz0123456789@$&^%"));
         em28.setDepartmentId(Department.LOGISTIC.getDepartment());
         em28.setAccountId("601029");
         em28.setUnitId(Unit.GALLONS.getUnit());
@@ -568,7 +621,7 @@ public class InternalDataBase {
         this.emissionRecordsTreeMap.put(em28.getEmissionId(), em28);
 
         Emission em29 = new Emission();
-        em29.setUnitId(this.hashCreator.createMD5Hash("abcdefghijklmnopqrstuvwxyz0123456789@$&^%"));
+        em29.setEmissionId(this.hashCreator.createMD5Hash("abcdefghijklmnopqrstuvwxyz0123456789@$&^%"));
         em29.setDepartmentId(Department.LOGISTIC.getDepartment());
         em29.setAccountId("601029");
         em29.setUnitId(Unit.GALLONS.getUnit());
@@ -578,7 +631,7 @@ public class InternalDataBase {
         this.emissionRecordsTreeMap.put(em29.getEmissionId(), em29);
 
         Emission em30 = new Emission();
-        em30.setUnitId(this.hashCreator.createMD5Hash("abcdefghijklmnopqrstuvwxyz0123456789@$&^%"));
+        em30.setEmissionId(this.hashCreator.createMD5Hash("abcdefghijklmnopqrstuvwxyz0123456789@$&^%"));
         em30.setDepartmentId(Department.LOGISTIC.getDepartment());
         em30.setAccountId("601029");
         em30.setUnitId(Unit.GALLONS.getUnit());
@@ -590,7 +643,7 @@ public class InternalDataBase {
 
         // trip
         Emission em31 = new Emission();
-        em31.setUnitId(this.hashCreator.createMD5Hash("abcdefghijklmnopqrstuvwxyz0123456789@$&^%"));
+        em31.setEmissionId(this.hashCreator.createMD5Hash("abcdefghijklmnopqrstuvwxyz0123456789@$&^%"));
         em31.setDepartmentId(Department.LOGISTIC.getDepartment());
         em31.setAccountId("601050");
         em31.setUnitId(Unit.TRIPS.getUnit());
@@ -600,7 +653,7 @@ public class InternalDataBase {
         this.emissionRecordsTreeMap.put(em31.getEmissionId(), em31);
 
         Emission em32 = new Emission();
-        em32.setUnitId(this.hashCreator.createMD5Hash("abcdefghijklmnopqrstuvwxyz0123456789@$&^%"));
+        em32.setEmissionId(this.hashCreator.createMD5Hash("abcdefghijklmnopqrstuvwxyz0123456789@$&^%"));
         em32.setDepartmentId(Department.LOGISTIC.getDepartment());
         em32.setAccountId("601050");
         em32.setUnitId(Unit.TRIPS.getUnit());
@@ -610,7 +663,7 @@ public class InternalDataBase {
         this.emissionRecordsTreeMap.put(em32.getEmissionId(), em32);
 
         Emission em33 = new Emission();
-        em33.setUnitId(this.hashCreator.createMD5Hash("abcdefghijklmnopqrstuvwxyz0123456789@$&^%"));
+        em33.setEmissionId(this.hashCreator.createMD5Hash("abcdefghijklmnopqrstuvwxyz0123456789@$&^%"));
         em33.setDepartmentId(Department.LOGISTIC.getDepartment());
         em33.setAccountId("601050");
         em33.setUnitId(Unit.TRIPS.getUnit());
