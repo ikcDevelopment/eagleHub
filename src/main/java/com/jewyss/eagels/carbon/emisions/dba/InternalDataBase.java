@@ -8,6 +8,7 @@ import com.jewyss.eagels.carbon.emisions.security.HashCreator;
 import jakarta.annotation.PostConstruct;
 import lombok.Getter;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.actuate.autoconfigure.metrics.MetricsProperties;
 import org.springframework.stereotype.Service;
 import org.springframework.web.context.annotation.ApplicationScope;
 
@@ -24,22 +25,38 @@ import java.util.concurrent.atomic.AtomicReference;
 @ApplicationScope
 @Service
 public class InternalDataBase {
-    @Autowired
+
     private HashCreator hashCreator;
 
-    private TreeMap<String, Emission> emissionRecordsTreeMap = new TreeMap<>();
-    private List<AccountToControl> accountToControlList = new ArrayList<>();
+    @Autowired
+    public void setHashCreator(HashCreator hashCreator){
+        this.hashCreator = hashCreator;
+    }
 
-    private List<EmissionLimits> emissionLimitsList = new ArrayList<>();
+
+    private TreeMap<String, Emission> emissionRecordsTreeMap;
+    private List<AccountToControl> accountToControlList;
+
+    private List<EmissionLimits> emissionLimitsList;
     @Getter
     private String message="";
+
+    public InternalDataBase() {
+        this.emissionRecordsTreeMap = new TreeMap<String, Emission>();
+        this.accountToControlList = new ArrayList<>();
+        this.emissionLimitsList = new ArrayList<>();
+    }
 
     public boolean addEmissionRecord(EmissionRequest emissionRequest){
         this.message="Emission record successfully added.";
 
         try {
             Emission emission = this.convertEmission(emissionRequest);
-            this.emissionRecordsTreeMap.put(emission.getEmissionId(), emission);
+            emissionRecordsTreeMap.put(emission.getEmissionId(), emission);
+            System.out.println(emission.getEmissionId());
+            System.out.println(emission.getAccountId());
+            System.out.println(emission.getDepartmentId());
+            System.out.println(emissionRecordsTreeMap.size());
         }catch (NoSuchAlgorithmException ex){
             this.message = ex.getMessage();
         }
@@ -92,13 +109,12 @@ public class InternalDataBase {
     public Map<Integer, BigDecimal> percentageEmissionByCategory(List<String> accounts){
         this.message = "The percentages where calculated successfully!";
 
-        System.out.println(accounts);
-
         List<Emission> emissionsInDb = new ArrayList<>();
         Map<Integer, BigDecimal> resultados  = new HashMap<>();
         Map<Integer, BigDecimal> resultsPercentage  = new HashMap<>();
         // filter accounts
         this.emissionRecordsTreeMap.forEach( (id, emission) ->{
+            System.out.println(emission.getAccountId());
             if(accounts.contains(emission.getAccountId())){
                 emissionsInDb.add(emission);
             }
@@ -671,6 +687,7 @@ public class InternalDataBase {
         em33.setMonth(3);
         em33.setYear(2022);
         this.emissionRecordsTreeMap.put(em33.getEmissionId(), em33);
+
     }
 
 }

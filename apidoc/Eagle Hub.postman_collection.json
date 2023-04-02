@@ -1,0 +1,81 @@
+{
+	"info": {
+		"_postman_id": "ab78446d-99e1-4954-a6c4-97e32764b2f4",
+		"name": "Eagle Hub",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "11336389"
+	},
+	"item": [
+		{
+			"name": "Ping",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/v1/emissions/admin/ping",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"v1",
+						"emissions",
+						"admin",
+						"ping"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "percentageEmissionByCategory",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"accounts\": [\n        \"501026\",\n        \"601026\",\n        \"701026\"\n    ]\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/v1/emissions/admin/percentage/emission/category",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"v1",
+						"emissions",
+						"admin",
+						"percentage",
+						"emission",
+						"category"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "addEmission",
+			"request": {
+				"method": "GET",
+				"header": []
+			},
+			"response": []
+		},
+		{
+			"name": "updateEmission",
+			"request": {
+				"method": "GET",
+				"header": []
+			},
+			"response": []
+		}
+	]
+}

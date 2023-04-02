@@ -46,8 +46,8 @@ public class EmissionsController {
 
     InternalDataBase internalDataBase;
     @Autowired
-    public EmissionsController(InternalDataBase internalDataBase) {
-        this.internalDataBase=internalDataBase;
+    public void setInternalDataBase(InternalDataBase internalDataBase){
+        this.internalDataBase = internalDataBase;
     }
 
     @Operation(summary = "Add new emission", description = "Add new emission bases in classes defined for faster coding.")
@@ -84,7 +84,7 @@ public class EmissionsController {
             value="/update",
             method = RequestMethod.PUT
     )
-    public ResponseEntity<ResponseObject> updateEmission(
+    public ResponseEntity<ResponseObject> c(
             @Parameter @RequestBody Emission emission
     ){
         ResponseObject eagleResponse = new ResponseObject();
