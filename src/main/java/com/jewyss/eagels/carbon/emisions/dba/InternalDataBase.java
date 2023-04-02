@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.context.annotation.ApplicationScope;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.security.NoSuchAlgorithmException;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
@@ -151,7 +152,7 @@ public class InternalDataBase {
         for (Map.Entry<Integer, BigDecimal> entry : resultados.entrySet()) {
             Integer month = entry.getKey();
             BigDecimal valueP = entry.getValue();
-            BigDecimal percentage = valueP.divide(totalSum);
+            BigDecimal percentage = valueP.divide(totalSum, RoundingMode.HALF_UP);
             resultsPercentage.put(month, percentage);
         }
 
