@@ -84,7 +84,7 @@ public class EmissionsController {
             value="/update",
             method = RequestMethod.PUT
     )
-    public ResponseEntity<ResponseObject> c(
+    public ResponseEntity<ResponseObject> updateEmission(
             @Parameter @RequestBody Emission emission
     ){
         ResponseObject eagleResponse = new ResponseObject();

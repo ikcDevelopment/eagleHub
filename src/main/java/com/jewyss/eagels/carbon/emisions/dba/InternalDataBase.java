@@ -238,7 +238,7 @@ public class InternalDataBase {
         this.accountToControlList.add(accountA2);
 
         AccountToControl accountA3 = new AccountToControl();
-        accountA3.setAccountId("701030");
+        accountA3.setAccountId("701050");
         accountA3.setAccountName("Viajes");
         this.accountToControlList.add(accountA3);
 
@@ -280,7 +280,7 @@ public class InternalDataBase {
 
         EmissionLimits emP3 = new EmissionLimits();
         emP3.setLimitId(getKeyCode.get_keyCode());
-        emP3.setAccountId("701030");
+        emP3.setAccountId("701050");
         emP3.setDepartmentId(Department.ADMIN.getDepartment());
         emP3.setUnitId(Unit.TRIPS.getUnit());
         emP3.setLimit(new BigDecimal("36"));
@@ -417,7 +417,7 @@ public class InternalDataBase {
         Emission em7 = new Emission();
         em7.setEmissionId(getKeyCode.get_keyCode());
         em7.setDepartmentId(Department.ADMIN.getDepartment());
-        em7.setAccountId("701030");
+        em7.setAccountId("701050");
         em7.setUnitId(Unit.TRIPS.getUnit());
         em7.setEmission(new BigDecimal(1));
         em7.setMonth(1);
@@ -427,7 +427,7 @@ public class InternalDataBase {
         Emission em8 = new Emission();
         em8.setEmissionId(getKeyCode.get_keyCode());
         em8.setDepartmentId(Department.ADMIN.getDepartment());
-        em8.setAccountId("701030");
+        em8.setAccountId("701050");
         em8.setUnitId(Unit.TRIPS.getUnit());
         em8.setEmission(new BigDecimal(1));
         em8.setMonth(2);
@@ -437,7 +437,7 @@ public class InternalDataBase {
         Emission em9 = new Emission();
         em9.setEmissionId(getKeyCode.get_keyCode());
         em9.setDepartmentId(Department.ADMIN.getDepartment());
-        em9.setAccountId("701030");
+        em9.setAccountId("701050");
         em9.setUnitId(Unit.TRIPS.getUnit());
         em9.setEmission(new BigDecimal(1));
         em9.setMonth(3);
