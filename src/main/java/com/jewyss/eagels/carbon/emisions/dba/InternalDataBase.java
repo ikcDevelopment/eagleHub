@@ -532,7 +532,7 @@ public class InternalDataBase {
         em18.setDepartmentId(Department.FACTORY.getDepartment());
         em18.setAccountId("501026");
         em18.setUnitId(Unit.GALLONS.getUnit());
-        em18.setEmission(new BigDecimal("166.67"));
+        em18.setEmission(new BigDecimal("166.66"));
         em18.setMonth(3);
         em18.setYear(2022);
         this.emissionRecordsTreeMap.put(em18.getEmissionId(), em18);
