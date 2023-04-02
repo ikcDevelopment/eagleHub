@@ -64,16 +64,57 @@
 		{
 			"name": "addEmission",
 			"request": {
-				"method": "GET",
-				"header": []
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"month\": 4,\n    \"year\": 2022,\n    \"accountId\": \"701025\",\n    \"departmentId\": \"Logistic\",\n    \"unitId\":\"trips\",\n    \"emission\": 2\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/v1/emissions/admin/new",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"v1",
+						"emissions",
+						"admin",
+						"new"
+					]
+				}
 			},
 			"response": []
 		},
 		{
 			"name": "updateEmission",
 			"request": {
-				"method": "GET",
-				"header": []
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"emissionId\":\"\"\n    \"month\": 4,\n    \"year\": 2022,\n    \"accountId\": \"701025\",\n    \"departmentId\": \"Logistic\",\n    \"unitId\":\"trips\",\n    \"emission\": 2\n}"
+				},
+				"url": {
+					"raw": "http://localhost:8080/v1/emissions/admin/update",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"v1",
+						"emissions",
+						"admin",
+						"update"
+					]
+				}
 			},
 			"response": []
 		}
