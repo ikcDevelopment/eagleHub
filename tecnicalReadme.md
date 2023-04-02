@@ -20,10 +20,11 @@ I simplified the endpoint to update any kind of emissions ** updateEmission()  *
         BigDecimal emission;
     }`
 
-I simplified the endpoint to calculate the consumption of any kind of emissions ** percentageEmissionByCategory()  ** using next class:
+I simplified the endpoint to calculate the consumption of any kind of emissions ** percentageEmissionByCategory()  
+** using next class:
 
     Instead of a GET endpoint I am using a POST endpoint to be able to send a body request
-    with a list of accounts ( emission ) the use want to rate: 
+    with a list of accounts ( emission ) the user wants to rate: 
 
     public class EmissionCategories {
         List<String> accounts;

@@ -1,7 +1,7 @@
 package com.jewyss.eagels.carbon.emisions.security;
 
 /**
- * @company kappa.computacion
+ * @project Eagle hub
  * @coder estuardo.wyss
  * @date
  */

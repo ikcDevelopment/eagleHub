@@ -7,7 +7,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
 /**
- * @company kappa.computacion
+ * @project Eagle hub
  * @coder estuardo.wyss
  * @date
  */

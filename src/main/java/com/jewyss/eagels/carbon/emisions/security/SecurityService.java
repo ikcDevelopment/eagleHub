@@ -3,7 +3,7 @@ package com.jewyss.eagels.carbon.emisions.security;
 import java.util.Base64;
 
 /**
- * @company kappa.computacion
+ * @project Eagle hub
  * @coder estuardo.wyss
  * @date
  */
