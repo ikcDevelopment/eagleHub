@@ -1,6 +1,7 @@
 package com.jewyss.eagels.carbon.emisions.dba;
 
 import com.jewyss.eagels.carbon.emisions.models.AccountToControl;
+import com.jewyss.eagels.carbon.emisions.models.AverageUseOfSegment;
 import com.jewyss.eagels.carbon.emisions.models.EmissionLimits;
 import com.jewyss.eagels.carbon.emisions.models.request.Emission;
 import com.jewyss.eagels.carbon.emisions.models.request.EmissionRequest;
@@ -9,9 +10,7 @@ import com.jewyss.eagels.carbon.emisions.security.HashCreator;
 import jakarta.annotation.PostConstruct;
 import lombok.Getter;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.actuate.autoconfigure.metrics.MetricsProperties;
 import org.springframework.stereotype.Controller;
-import org.springframework.stereotype.Service;
 import org.springframework.web.context.annotation.ApplicationScope;
 
 import java.math.BigDecimal;
@@ -123,7 +122,7 @@ public class InternalDataBase {
             }
         });
 
-        // sort by month
+        // sort by segment
         emissionsInDb.sort((d1, d2) -> {
             return d2.getAccountId().compareTo(d1.getAccountId());
         });
@@ -168,7 +167,75 @@ public class InternalDataBase {
 
     public void higherSegment(){}
 
-    public void averageUseOfSegmentMonthly(){}
+    /**
+     * This is related with
+     * Calcular el promedio mensual de consumo de combustible (en galones)
+     * Here the user is able to calculate any average based on the
+     * class that is used to request the service
+     */
+    public AverageUseOfSegment averageUseOfSegmentMonthly(List<String> segments){
+        AtomicReference<String> unitUsed= new AtomicReference<>("");
+
+        this.message = "The average use of monthly segment were calculated successfully!";
+
+        List<Emission> emissionsInDb = new ArrayList<>();
+        Map<Integer, BigDecimal> resultants  = new HashMap<>();
+        Map<Integer, BigDecimal> resultsPercentage  = new HashMap<>();
+        // filter accounts
+        this.emissionRecordsTreeMap.forEach( (id, emission) ->{
+            if(segments.contains(emission.getAccountId())){
+                unitUsed.set(emission.getUnitId());
+                emissionsInDb.add(emission);
+            }
+        });
+
+        // sort by segment
+        emissionsInDb.sort((d1, d2) -> {
+            return d2.getMonth() - d1.getMonth();
+        });
+
+        String account = "";
+        BigDecimal value = BigDecimal.ZERO;
+        BigDecimal totalSum = BigDecimal.ZERO;
+        int mes = 0;
+
+        for (Emission emission : emissionsInDb) {
+            value = emission.getEmission();
+            mes = emission.getMonth();
+
+            if (resultants.get(mes) != null) {
+                BigDecimal valor = resultants.get(mes);
+                valor = valor.add(value);
+                totalSum = totalSum.add(value);
+                resultants.replace(mes, valor);
+            }else{
+                resultants.put(mes, value);
+                totalSum = totalSum.add(value);
+            }
+        }
+
+        System.out.println(resultants);
+
+        for (Map.Entry<Integer, BigDecimal> entry : resultants.entrySet()) {
+            int monthK = entry.getKey();
+            BigDecimal valueP = entry.getValue();
+            System.out.println(monthK);
+            System.out.println(valueP);
+            BigDecimal percentage = BigDecimal.ZERO;
+            try {
+                percentage = valueP.divide(totalSum).setScale(4, RoundingMode.CEILING);
+            }catch(Exception ex){
+                percentage = valueP.divide(totalSum, RoundingMode.HALF_UP).setScale(4, RoundingMode.CEILING);
+                //percentage = new BigDecimal("-1");
+            }
+            resultsPercentage.put(monthK, percentage);
+        }
+
+        AverageUseOfSegment auos = new AverageUseOfSegment();
+        auos.setSegment(resultsPercentage);
+        auos.setUnitUsed(unitUsed.get());
+        return auos;
+    }
 
     public void comparativeAnalysisOfTrips(){}
 

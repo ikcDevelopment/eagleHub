@@ -1,9 +1,11 @@
 package com.jewyss.eagels.carbon.emisions.endpoints;
 
 import com.jewyss.eagels.carbon.emisions.dba.InternalDataBase;
+import com.jewyss.eagels.carbon.emisions.models.AverageUseOfSegment;
 import com.jewyss.eagels.carbon.emisions.models.request.Emission;
 import com.jewyss.eagels.carbon.emisions.models.request.EmissionCategories;
 import com.jewyss.eagels.carbon.emisions.models.request.EmissionRequest;
+import com.jewyss.eagels.carbon.emisions.models.responses.ResponseAverageUseOfSegment;
 import com.jewyss.eagels.carbon.emisions.models.responses.ResponseByPercentageCategory;
 import com.jewyss.eagels.carbon.emisions.models.responses.ResponseObject;
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
@@ -152,6 +154,35 @@ public class EmissionsController {
             eagleResponse.setStatus("ok");
             eagleResponse.setSuccess(true);
             eagleResponse.setCategories(values);
+        }else{
+            eagleResponse.setAmount(0);
+            eagleResponse.setMessage("There was a problem calculating the percentage.");
+            eagleResponse.setStatus("err");
+            eagleResponse.setSuccess(true);
+        }
+
+        return ResponseEntity.ok(eagleResponse);
+    }
+
+    @Operation(summary = "calculate any average based on the class that is used to request the service",
+            description = "the user is able to calculate any average based on the class that is used to request the service.")
+    @ApiResponse(responseCode = "200", description = "Successfully created.")
+    @ApiResponse(responseCode = "404", description = "Not found - The endpoint to create an owner was not found.")
+    @RequestMapping(
+            value="/percentage/emission/average/category",
+            method = RequestMethod.POST
+    )
+    public ResponseEntity<ResponseAverageUseOfSegment> averageUseOfSegmentMonthly(@Parameter @RequestBody EmissionCategories categories){
+        ResponseAverageUseOfSegment eagleResponse = new ResponseAverageUseOfSegment();
+
+        AverageUseOfSegment values = this.internalDataBase.averageUseOfSegmentMonthly(categories.getAccounts());
+
+        if(Objects.nonNull(values)){
+            eagleResponse.setAmount(values.getSegment().size());
+            eagleResponse.setMessage(this.internalDataBase.getMessage());
+            eagleResponse.setStatus("ok");
+            eagleResponse.setSuccess(true);
+            eagleResponse.setAverageUseOfSegment(values);
         }else{
             eagleResponse.setAmount(0);
             eagleResponse.setMessage("There was a problem calculating the percentage.");
