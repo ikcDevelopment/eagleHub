@@ -110,25 +110,23 @@ public class InternalDataBase {
      * I used accounts to manage the categories
      * @param accounts
      */
-    public Map<Integer, BigDecimal> percentageEmissionByCategory(List<String> accounts){
+    public Map<String, BigDecimal> percentageEmissionByCategory(List<String> accounts){
         this.message = "The percentages where calculated successfully!";
 
         List<Emission> emissionsInDb = new ArrayList<>();
-        Map<Integer, BigDecimal> resultados  = new HashMap<>();
-        Map<Integer, BigDecimal> resultsPercentage  = new HashMap<>();
+        Map<String, BigDecimal> resultants  = new HashMap<>();
+        Map<String, BigDecimal> resultsPercentage  = new HashMap<>();
         // filter accounts
         this.emissionRecordsTreeMap.forEach( (id, emission) ->{
-            System.out.println(emission.getAccountId());
             if(accounts.contains(emission.getAccountId())){
                 emissionsInDb.add(emission);
             }
         });
+
         // sort by month
         emissionsInDb.sort((d1, d2) -> {
-            return d2.getMonth() - d1.getMonth();
+            return d2.getAccountId().compareTo(d1.getAccountId());
         });
-
-        System.out.println(emissionsInDb);
 
         String account = "";
         BigDecimal value = BigDecimal.ZERO;
@@ -137,23 +135,32 @@ public class InternalDataBase {
 
         for (Emission emission : emissionsInDb) {
             value = emission.getEmission();
-            mes = emission.getMonth();
+            account = emission.getAccountId();
 
-            if (resultados.get(mes) != null) {
-                BigDecimal valor = resultados.get(mes);
+            if (resultants.get(account) != null) {
+                BigDecimal valor = resultants.get(account);
                 valor = valor.add(value);
                 totalSum = totalSum.add(value);
-                resultados.replace(mes, valor);
+                resultants.replace(account, valor);
             }else{
-                resultados.put(mes, value);
+                resultants.put(account, value);
+                totalSum = totalSum.add(value);
             }
         }
 
-        for (Map.Entry<Integer, BigDecimal> entry : resultados.entrySet()) {
-            Integer month = entry.getKey();
+        for (Map.Entry<String, BigDecimal> entry : resultants.entrySet()) {
+            String accountK = entry.getKey();
             BigDecimal valueP = entry.getValue();
-            BigDecimal percentage = valueP.divide(totalSum, RoundingMode.HALF_UP);
-            resultsPercentage.put(month, percentage);
+            System.out.println(accountK);
+            System.out.println(valueP);
+            BigDecimal percentage = BigDecimal.ZERO;
+            try {
+                percentage = valueP.divide(totalSum).setScale(4, RoundingMode.CEILING);
+            }catch(Exception ex){
+                percentage = valueP.divide(totalSum, RoundingMode.CEILING).setScale(4, RoundingMode.CEILING);
+                //percentage = new BigDecimal("-1");
+            }
+            resultsPercentage.put(accountK, percentage);
         }
 
         return resultsPercentage;

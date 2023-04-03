@@ -14,5 +14,5 @@ import java.util.Map;
 @Getter
 @Setter
 public class ResponseByPercentageCategory extends  ResponseObject{
-    Map<Integer, BigDecimal> categories;
+    Map<String, BigDecimal> categories;
 }

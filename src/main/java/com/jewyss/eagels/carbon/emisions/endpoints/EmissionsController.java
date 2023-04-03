@@ -144,7 +144,7 @@ public class EmissionsController {
     public ResponseEntity<ResponseByPercentageCategory> percentageEmissionByCategory(@Parameter @RequestBody EmissionCategories categories){
         ResponseByPercentageCategory eagleResponse = new ResponseByPercentageCategory();
 
-        Map<Integer, BigDecimal> values = this.internalDataBase.percentageEmissionByCategory(categories.getAccounts());
+        Map<String, BigDecimal> values = this.internalDataBase.percentageEmissionByCategory(categories.getAccounts());
 
         if(Objects.nonNull(values)){
             eagleResponse.setAmount(values.size());
