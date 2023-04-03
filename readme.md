@@ -8,6 +8,10 @@ Aceite vehículos	        501029	601029	    701029
 Viajes	                    501050	601050	    701050
 Papel	                    501051	601051	    701051
 
+Read the annotations in postman.  Because of the way I design the endpoints the
+user is going to be able to run most of the requirements, simplified in just one
+end point.
+
 I simplified the endpoint to register any kind of emissions ** addEmission()  ** using next class:
     `public class EmissionRequest {
         int month;

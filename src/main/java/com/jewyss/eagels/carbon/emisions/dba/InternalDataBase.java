@@ -3,6 +3,7 @@ package com.jewyss.eagels.carbon.emisions.dba;
 import com.jewyss.eagels.carbon.emisions.models.AccountToControl;
 import com.jewyss.eagels.carbon.emisions.models.AverageUseOfSegment;
 import com.jewyss.eagels.carbon.emisions.models.EmissionLimits;
+import com.jewyss.eagels.carbon.emisions.models.HigherImpactedUnit;
 import com.jewyss.eagels.carbon.emisions.models.request.Emission;
 import com.jewyss.eagels.carbon.emisions.models.request.EmissionRequest;
 import com.jewyss.eagels.carbon.emisions.security.GetKeyCode;
@@ -214,8 +215,6 @@ public class InternalDataBase {
             }
         }
 
-        System.out.println(resultants);
-
         for (Map.Entry<Integer, BigDecimal> entry : resultants.entrySet()) {
             int monthK = entry.getKey();
             BigDecimal valueP = entry.getValue();
@@ -241,8 +240,8 @@ public class InternalDataBase {
      * This is related with:
      * Calcular qué segmento es el que más impacta (en porcentaje)
      */
-    public void segmentWithHigherImpact(){
-        this.message = "The percentages were calculated successfully!";
+    public HigherImpactedUnit segmentWithHigherImpact(){
+        this.message = "The calculation was done successfully!";
 
         List<Emission> emissionsInDb = new ArrayList<>();
         Map<String, BigDecimal> resultants  = new HashMap<>();
@@ -275,11 +274,21 @@ public class InternalDataBase {
             }
         };
 
+        AtomicReference<String> higherAccount = new AtomicReference<>("");
+        AtomicReference<BigDecimal> higherImpact= new AtomicReference<>(BigDecimal.ZERO);
+
         resultants.forEach((key,emissionValue)->{
-            System.out.print(key+" - ");
-            System.out.println(emissionValue);
+            if(higherImpact.get().compareTo(emissionValue) < 0){
+                higherImpact.set(emissionValue);
+                higherAccount.set(key);
+            }
         });
 
+        HigherImpactedUnit hpu = new HigherImpactedUnit();
+        hpu.setHigherImpact(higherImpact.get());
+        hpu.setHigherAccount(higherAccount.get());
+
+        return hpu;
     }
 
     public void comparativeAnalysisOfTrips(){}

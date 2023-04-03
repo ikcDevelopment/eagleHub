@@ -2,11 +2,13 @@ package com.jewyss.eagels.carbon.emisions.endpoints;
 
 import com.jewyss.eagels.carbon.emisions.dba.InternalDataBase;
 import com.jewyss.eagels.carbon.emisions.models.AverageUseOfSegment;
+import com.jewyss.eagels.carbon.emisions.models.HigherImpactedUnit;
 import com.jewyss.eagels.carbon.emisions.models.request.Emission;
 import com.jewyss.eagels.carbon.emisions.models.request.EmissionCategories;
 import com.jewyss.eagels.carbon.emisions.models.request.EmissionRequest;
 import com.jewyss.eagels.carbon.emisions.models.responses.ResponseAverageUseOfSegment;
 import com.jewyss.eagels.carbon.emisions.models.responses.ResponseByPercentageCategory;
+import com.jewyss.eagels.carbon.emisions.models.responses.ResponseHigherImpactedUnit;
 import com.jewyss.eagels.carbon.emisions.models.responses.ResponseObject;
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.info.Contact;
@@ -201,25 +203,25 @@ public class EmissionsController {
             value="/percentage/emission/higher/impact",
             method = RequestMethod.GET
     )
-    public ResponseEntity<String> segmentWithHigherImpact(){
-        ResponseAverageUseOfSegment eagleResponse = new ResponseAverageUseOfSegment();
+    public ResponseEntity<ResponseHigherImpactedUnit> segmentWithHigherImpact(){
+        ResponseHigherImpactedUnit eagleResponse = new ResponseHigherImpactedUnit();
 
-        this.internalDataBase.segmentWithHigherImpact();
+        HigherImpactedUnit hpu = this.internalDataBase.segmentWithHigherImpact();
 
-        /*if(Objects.nonNull(values)){
-            eagleResponse.setAmount(values.getSegment().size());
+        if(Objects.nonNull(hpu)){
+            eagleResponse.setAmount(1);
             eagleResponse.setMessage(this.internalDataBase.getMessage());
             eagleResponse.setStatus("ok");
             eagleResponse.setSuccess(true);
-            eagleResponse.setAverageUseOfSegment(values);
+            eagleResponse.setHigherImpactedUnit(hpu);
         }else{
             eagleResponse.setAmount(0);
             eagleResponse.setMessage("There was a problem calculating the percentage.");
             eagleResponse.setStatus("err");
             eagleResponse.setSuccess(true);
-        }*/
+        }
 
-        return ResponseEntity.ok("done");
+        return ResponseEntity.ok(eagleResponse);
     }
 
     @RequestMapping(
