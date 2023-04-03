@@ -157,7 +157,7 @@ public class InternalDataBase {
             try {
                 percentage = valueP.divide(totalSum).setScale(4, RoundingMode.CEILING);
             }catch(Exception ex){
-                percentage = valueP.divide(totalSum, RoundingMode.CEILING).setScale(4, RoundingMode.CEILING);
+                percentage = valueP.divide(totalSum, RoundingMode.HALF_UP).setScale(4, RoundingMode.CEILING);
                 //percentage = new BigDecimal("-1");
             }
             resultsPercentage.put(accountK, percentage);
@@ -165,6 +165,26 @@ public class InternalDataBase {
 
         return resultsPercentage;
     }
+
+    public void higherSegment(){}
+
+    public void averageUseOfSegmentMonthly(){}
+
+    public void comparativeAnalysisOfTrips(){}
+
+    public void reportOfOilUsedMonthly(){}
+
+    public void reportMonthWhereWereLessLossOfRefrigerants(){}
+
+    public void reportMonthWithLessUseOfGasolineVrsMoreUseOfGasoline(){}
+
+    public void reportAverageUseOfGasolineByMonth(){}
+
+    public void reportAverageUseOfEnergyInPlantByMonth(){}
+
+    public void reportComparativeUseOfGasolineEnergyMonthly(){}
+
+    public void reportDerivadosDelPetroleo(){}
 
     private Emission convertEmission(EmissionRequest emissionRequest) throws NoSuchAlgorithmException {
         Emission emission = new Emission();
