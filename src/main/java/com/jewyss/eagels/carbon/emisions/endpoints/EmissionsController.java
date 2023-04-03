@@ -193,6 +193,35 @@ public class EmissionsController {
         return ResponseEntity.ok(eagleResponse);
     }
 
+    @Operation(summary = "calculate segment With Higher Impact",
+            description = "the user is able to calculate any average based on the class that is used to request the service.")
+    @ApiResponse(responseCode = "200", description = "Successfully created.")
+    @ApiResponse(responseCode = "404", description = "Not found - The endpoint to create an owner was not found.")
+    @RequestMapping(
+            value="/percentage/emission/higher/impact",
+            method = RequestMethod.GET
+    )
+    public ResponseEntity<String> segmentWithHigherImpact(){
+        ResponseAverageUseOfSegment eagleResponse = new ResponseAverageUseOfSegment();
+
+        this.internalDataBase.segmentWithHigherImpact();
+
+        /*if(Objects.nonNull(values)){
+            eagleResponse.setAmount(values.getSegment().size());
+            eagleResponse.setMessage(this.internalDataBase.getMessage());
+            eagleResponse.setStatus("ok");
+            eagleResponse.setSuccess(true);
+            eagleResponse.setAverageUseOfSegment(values);
+        }else{
+            eagleResponse.setAmount(0);
+            eagleResponse.setMessage("There was a problem calculating the percentage.");
+            eagleResponse.setStatus("err");
+            eagleResponse.setSuccess(true);
+        }*/
+
+        return ResponseEntity.ok("done");
+    }
+
     @RequestMapping(
             value="/ping",
             method = RequestMethod.GET

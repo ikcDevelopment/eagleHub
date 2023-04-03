@@ -1,3 +1,13 @@
+Accounts or segments created to manage the app.    
+Emission	            Factory	Logistic    Admin
+Pérdida gases refrigerantes	501025	601025	    701025
+Combustible vehículos	    501026	601026	    701026
+Aceite maquinaria	        501027	601027	    701027
+Energia eléctrica	        501028	601028	    701028
+Aceite vehículos	        501029	601029	    701029
+Viajes	                    501050	601050	    701050
+Papel	                    501051	601051	    701051
+
 I simplified the endpoint to register any kind of emissions ** addEmission()  ** using next class:
     `public class EmissionRequest {
         int month;

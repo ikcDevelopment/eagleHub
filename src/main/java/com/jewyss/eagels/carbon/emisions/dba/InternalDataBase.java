@@ -110,7 +110,7 @@ public class InternalDataBase {
      * @param accounts
      */
     public Map<String, BigDecimal> percentageEmissionByCategory(List<String> accounts){
-        this.message = "The percentages where calculated successfully!";
+        this.message = "The percentages were calculated successfully!";
 
         List<Emission> emissionsInDb = new ArrayList<>();
         Map<String, BigDecimal> resultants  = new HashMap<>();
@@ -206,11 +206,11 @@ public class InternalDataBase {
             if (resultants.get(mes) != null) {
                 BigDecimal valor = resultants.get(mes);
                 valor = valor.add(value);
-                totalSum = totalSum.add(value);
+                //totalSum = totalSum.add(value);
                 resultants.replace(mes, valor);
             }else{
                 resultants.put(mes, value);
-                totalSum = totalSum.add(value);
+                totalSum = totalSum.add(BigDecimal.ONE);
             }
         }
 
@@ -235,6 +235,51 @@ public class InternalDataBase {
         auos.setSegment(resultsPercentage);
         auos.setUnitUsed(unitUsed.get());
         return auos;
+    }
+
+    /**
+     * This is related with:
+     * Calcular qué segmento es el que más impacta (en porcentaje)
+     */
+    public void segmentWithHigherImpact(){
+        this.message = "The percentages were calculated successfully!";
+
+        List<Emission> emissionsInDb = new ArrayList<>();
+        Map<String, BigDecimal> resultants  = new HashMap<>();
+        Map<String, BigDecimal> resultsPercentage  = new HashMap<>();
+        // filter accounts
+        this.emissionRecordsTreeMap.forEach( (id, emission) ->{
+            emissionsInDb.add(emission);
+        });
+
+        // sort by segment
+        emissionsInDb.sort((d1, d2) -> {
+            return d2.getAccountId().substring(3,6).compareTo(d1.getAccountId().substring(3,6));
+        });
+
+        String accountP = "";
+        BigDecimal totalSum =BigDecimal.ZERO;
+
+        for (Emission e : emissionsInDb) {
+            String segment = e.getAccountId().substring(3,6);
+            BigDecimal value = e.getEmission();
+
+            if (resultants.get(segment) != null) {
+                BigDecimal valor = resultants.get(segment);
+                valor = valor.add(value);
+                totalSum = totalSum.add(value);
+                resultants.replace(segment, valor);
+            }else{
+                resultants.put(segment, value);
+                totalSum = totalSum.add(value);
+            }
+        };
+
+        resultants.forEach((key,emissionValue)->{
+            System.out.print(key+" - ");
+            System.out.println(emissionValue);
+        });
+
     }
 
     public void comparativeAnalysisOfTrips(){}
