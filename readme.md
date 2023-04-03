@@ -1,5 +1,5 @@
 Accounts or segments created to manage the app.    
-Emission	            Factory	Logistic    Admin
+Emission	               Factory	Logistic    Admin
 Pérdida gases refrigerantes	501025	601025	    701025
 Combustible vehículos	    501026	601026	    701026
 Aceite maquinaria	        501027	601027	    701027
@@ -8,7 +8,8 @@ Aceite vehículos	        501029	601029	    701029
 Viajes	                    501050	601050	    701050
 Papel	                    501051	601051	    701051
 
-Read the annotations in postman.  Because of the way I design the endpoints the
+**Read the annotations in postman**.  
+Because of the way I design the endpoints and service the
 user is going to be able to run most of the requirements, simplified in just one
 end point.
 
