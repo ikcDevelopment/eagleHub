@@ -1,3 +1,6 @@
+Read swagger documentation: 
+[http://localhost:8080/swagger-ui/index.html](http://localhost:8080/swagger-ui/index.html)
+
 Accounts or segments created to manage the app.    
 Emission	               Factory	Logistic    Admin
 Pérdida gases refrigerantes	501025	601025	    701025
