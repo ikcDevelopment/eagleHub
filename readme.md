@@ -1,6 +1,11 @@
 Read swagger documentation: 
 [http://localhost:8080/swagger-ui/index.html](http://localhost:8080/swagger-ui/index.html)
 
+I didn't have enough time to complete all the endpoints. However, I made some improvements 
+making some endpoints able to process any kind of info.
+
+I would finish them upon QA asking for it.
+
 Accounts or segments created to manage the app.    
 Emission	               Factory	Logistic    Admin
 Pérdida gases refrigerantes	501025	601025	    701025
