@@ -1,6 +1,9 @@
 Read swagger documentation: 
 [http://localhost:8080/swagger-ui/index.html](http://localhost:8080/swagger-ui/index.html)
 
+Today I read abouty this: [https://dekorate.io/docs/get-started/](https://dekorate.io/docs/get-started/)
+how to deploy Spring applications in kubernetes.  See image in apidoc directory
+
 I didn't have enough time to complete all the endpoints. However, I made some improvements 
 making some endpoints able to process any kind of info.
 
